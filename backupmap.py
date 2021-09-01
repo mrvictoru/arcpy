@@ -1,8 +1,8 @@
 import arcpy, sys, os
 
 # set script parameter
-p = arcpy.mp.ArcGISProject('current')
-m_name = p.activeMap.name
+p = arcpy.mp.ArcGISProject('current') # set project to current project
+m_name = p.activeMap.name # get current map name
 domain_networks = ["*"] #select all
 export_data = "INCLUDE_DATA" #to load data from all working from all feature classes
 output_name = arcpy.GetParameter(2)
@@ -41,12 +41,13 @@ except Exception as e:
 pmsg = "Creating new backup project at: " + output_path
 arcpy.AddMessage(pmsg)
 output_project = os.path.join(str(output_path), output_name + ".aprx")
-p.saveACopy(str(output_project))
+p.saveACopy(str(output_project)) # save project at output path
 
-p = arcpy.mp.ArcGISProject(str(output_project))
+p = arcpy.mp.ArcGISProject(str(output_project)) # change project to the newly create one
 pmsg = "Created new Project: " + str(p.filePath)
 arcpy.AddMessage(pmsg)
 
+# loop to map with matching name
 for m in p.listMaps():
     if m.name == m_name:
         break
@@ -60,7 +61,6 @@ l = m.listLayers()
 
 # loop through the layers in the map
 for layer in l:
-    
     try:
         arcpy.AddMessage(layer.name)
         pmsg = str(layer.connectionProperties) + "updating"
