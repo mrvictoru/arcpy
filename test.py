@@ -1,23 +1,20 @@
-import arcpy
+import arcpy, os
 
 # get script parameter
 p = arcpy.mp.ArcGISProject('current')
 m = p.activeMap
-l = m.listLayers()
-newconnprop = arcpy.GetParameterAsText(0)
-
-# indicates current map name
-pmsg = "Current map: " + m.name
+utility_network = arcpy.GetParameter(0)
+pmsg = "UN: " + str(utility_network)
 arcpy.AddMessage(pmsg)
 
-pmsg = "input: " + newconnprop
+dest_path = arcpy.GetParameter(1)
+pmsg = "destination: " + str(dest_path)
 arcpy.AddMessage(pmsg)
 
-# loop through the layers in the map
-for layer in l:
-    try:
-        arcpy.AddMessage(layer.name)
-        arcpy.AddMessage(str(layer.connectionProperties))
-    except:
-        arcpy.AddMessage(layer.name)
-        arcpy.AddMessage("null conn")
+output_name = arcpy.GetParameter(2)
+dest_project = os.path.join(str(dest_path), output_name + ".aprx")
+p.saveACopy(str(dest_project))
+
+p = arcpy.mp.ArcGISProject(str(dest_project))
+pmsg = "New Project: " + str(p.filePath)
+arcpy.AddMessage(pmsg)
