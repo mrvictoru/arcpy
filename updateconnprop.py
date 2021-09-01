@@ -4,20 +4,25 @@ import arcpy
 p = arcpy.mp.ArcGISProject('current')
 m = p.activeMap
 l = m.listLayers()
-newconnprop = arcpy.GetParameterasText(0)
+newconnprop = arcpy.GetParameterAsText(0)
 
 # indicates current map name
-pmsg = "Current map:" + m.name
+pmsg = "Current map:" + m.name + "\n"
 arcpy.AddMessage(pmsg)
 
 # loop through the layers in the map
 for layer in l:
-    arcpy.AddMessage(layer.name)
+    
     try:
-        print(layer.connectionProperties)
+        arcpy.AddMessage(layer.name)
+        pmsg = str(layer.connectionProperties) + "updating"
+        arcpy.AddMessage(pmsg)
         layer.updateConnectionProperties(layer.connectionProperties, newconnprop)
+        pmsg = str(layer.connectionProperties + "updated")
+        arcpy.AddMessage(pmsg)
     except:
-        print
+        pmsg = str(layer.name) + "Layer Conn Prop Null"
+        arcpy.AddMessage(pmsg)
 
 
 
