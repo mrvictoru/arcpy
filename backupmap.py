@@ -38,7 +38,7 @@ except Exception as e:
     sys.exit(1)
 
 # create new backup project at output path
-pmsg = "Creating new backup project at: " + output_path
+pmsg = "Creating new backup project at: " + str(output_path)
 arcpy.AddMessage(pmsg)
 output_project = os.path.join(str(output_path), output_name + ".aprx")
 p.saveACopy(str(output_project)) # save project at output path
