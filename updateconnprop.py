@@ -4,7 +4,7 @@ import arcpy
 p = arcpy.mp.ArcGISProject('current')
 m = p.activeMap
 l = m.listLayers()
-newconnprop = arcpy.GetParameterAsText(0)
+target_path = arcpy.GetParameterAsText(0)
 
 # indicates current map name
 pmsg = "Current map:" + m.name + "\n"
@@ -16,8 +16,10 @@ for layer in l:
     try:
         arcpy.AddMessage(layer.name)
         pmsg = str(layer.connectionProperties) + "updating"
+        new_conn = layer.connectionProperties
+        new_conn['connection_info'] = target_path
         arcpy.AddMessage(pmsg)
-        layer.updateConnectionProperties(layer.connectionProperties, newconnprop)
+        layer.updateConnectionProperties(layer.connectionProperties, new_conn)
         pmsg = str(layer.connectionProperties + "updated")
         arcpy.AddMessage(pmsg)
     except:

@@ -29,8 +29,10 @@ for layer in l:
     try:
         arcpy.AddMessage(layer.name)
         pmsg = str(layer.connectionProperties) + "updating"
+        new_conn = layer.connectionProperties
+        new_conn['connection_info'] = asset_package
         arcpy.AddMessage(pmsg)
-        layer.updateConnectionProperties(layer.connectionProperties, asset_package)
+        layer.updateConnectionProperties(layer.connectionProperties, new_conn)
         pmsg = str(layer.connectionProperties + "updated")
         arcpy.AddMessage(pmsg)
     except:

@@ -2,7 +2,7 @@ import arcpy, sys, os
 
 # set script parameter
 p = arcpy.mp.ArcGISProject('current') # set project to current project
-m_name = p.activeMap.name # get current map name
+m = p.activeMap # get current map name
 domain_networks = ["*"] #select all
 export_data = "INCLUDE_DATA" #to load data from all working from all feature classes
 output_name = arcpy.GetParameter(2)
@@ -37,21 +37,6 @@ except Exception as e:
     arcpy.AddError(pmsg)
     sys.exit(1)
 
-# create new backup project at output path
-pmsg = "Creating new backup project at: " + str(output_path)
-arcpy.AddMessage(pmsg)
-output_project = os.path.join(str(output_path), output_name + ".aprx")
-p.saveACopy(str(output_project)) # save project at output path
-
-p = arcpy.mp.ArcGISProject(str(output_project)) # change project to the newly create one
-pmsg = "Created new Project: " + str(p.filePath)
-arcpy.AddMessage(pmsg)
-
-# loop to map with matching name
-for m in p.listMaps():
-    if m.name == m_name:
-        break
-
 # update connection properties
 pmsg = "Updating connection properties in " + str(m.name) + "..."
 arcpy.AddMesage(pmsg)
@@ -64,11 +49,19 @@ for layer in l:
     try:
         arcpy.AddMessage(layer.name)
         pmsg = str(layer.connectionProperties) + "updating"
+        new_conn = layer.connectionProperties
+        new_conn['connection_info'] = new
         arcpy.AddMessage(pmsg)
-        layer.updateConnectionProperties(layer.connectionProperties, new)
+        layer.updateConnectionProperties(layer.connectionProperties, new_conn)
         pmsg = str(layer.connectionProperties + "updated")
         arcpy.AddMessage(pmsg)
     except:
         pmsg = str(layer.name) + "Layer Conn Prop Null"
         arcpy.AddMessage(pmsg)
 
+
+# create new backup project at output path
+pmsg = "Creating new backup project at: " + str(output_path)
+arcpy.AddMessage(pmsg)
+output_project = os.path.join(str(output_path), output_name + ".aprx")
+p.saveACopy(str(output_project)) # save project at output path
