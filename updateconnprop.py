@@ -1,6 +1,10 @@
 import arcpy, json, os
 
 def updateconnprop(target_path, mapping_path):
+    #check workspace:
+    if "gdb" in target_path:
+        workspace_factory = "File Geodatabase"
+
     # get dataset mapping json list
     jsonlist = []
     jlist = os.listdir(mapping_path)
@@ -24,14 +28,17 @@ def updateconnprop(target_path, mapping_path):
                 if layer.name in jmapping["feature"]:
                     new_conn["dataset"] = jmapping["dataset"]
                     break
-            pmsg = str(layer.connectionProperties) + "updating"
+            new_conn["workspace_factory"] = workspace_factory
+            pmsg = str(layer.connectionProperties) + " updating"
+            arcpy.AddMessage(pmsg)
+            pmsg = "to " + str(new_conn) + " new connection"
             arcpy.AddMessage(pmsg)
             layer.updateConnectionProperties(layer.connectionProperties, new_conn)
             pmsg = str(layer.connectionProperties + "updated")
             arcpy.AddMessage(pmsg)
         except:
             pmsg = str(layer.name) + "Layer Conn Prop Null"
-        arcpy.AddMessage(pmsg)
+            arcpy.AddMessage(pmsg)
 
 # get script parameter
 p = arcpy.mp.ArcGISProject('current')
