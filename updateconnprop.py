@@ -26,6 +26,10 @@ for layer in l:
         arcpy.AddMessage(layer.name)
         new_conn = layer.connectionProperties
         new_conn['connection_info'] = target_path
+        for jmapping in jsonlist:
+            if layer.name in jmapping["feature"]:
+                new_conn["dataset"] = jmapping["dataset"]
+                break
         pmsg = str(layer.connectionProperties) + "updating"
         arcpy.AddMessage(pmsg)
         layer.updateConnectionProperties(layer.connectionProperties, new_conn)
