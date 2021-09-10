@@ -5,7 +5,7 @@ def updateconnprop(target_path, mapping_path):
     jsonlist = []
     jlist = os.listdir(mapping_path)
     for jfile in jlist:
-        jpath = os.path.join(jlist,jfile)
+        jpath = os.path.join(mapping_path,jfile)
         with open(jpath) as f:
             data = json.load(f)
             jsonlist.append(data)
