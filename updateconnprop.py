@@ -51,6 +51,7 @@ layers = m.listLayers() # get layers in map
 target = arcpy.GetParameterAsText(0)
 mapping = arcpy.GetParameterAsText(1)
 
+# update connection properties
 updateconnpropgdb(target_path=target, mapping_path=mapping, l=layers)
 
 
