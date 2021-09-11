@@ -1,5 +1,6 @@
 import arcpy, json, os, sys
 
+# this function can only be used if the target path is a file geodatabase
 def updateconnpropgdb(target_path, mapping_path, l):
     #check workspace:
     if "gdb" in target_path:
