@@ -29,8 +29,7 @@ def updateconnpropgdb(target_path, mapping_path, l):
             # disregard lower case when check for dataset mapping
             for jmapping in jsonlist:
                 if layer.name.lower() in (string.lower() for string in jmapping["feature"]):
-                    pmsg = "dataset: " + str(new_conn["dataset"]) + " to " + str(jmapping["dataset"])
-                    arcpy.AddMessage(pmsg)
+
                     new_conn["dataset"] = jmapping["dataset"]
                     break
             # set to appropriate workspace factory
@@ -38,8 +37,7 @@ def updateconnpropgdb(target_path, mapping_path, l):
             arcpy.AddMessage(layer.name)
             pmsg = str(layer.connectionProperties) + " updating"
             arcpy.AddMessage(pmsg)
-            pmsg = "to " + str(new_conn) + " new connection"
-            arcpy.AddMessage(pmsg)
+
             layer.updateConnectionProperties(layer.connectionProperties, new_conn,True,False,False)
             pmsg = str(layer.connectionProperties) + "updated"
             arcpy.AddMessage(pmsg)
