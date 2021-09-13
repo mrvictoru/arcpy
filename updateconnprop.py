@@ -51,8 +51,8 @@ def updateconnprop(target_path, mapping_path, l):
 p = arcpy.mp.ArcGISProject('current') # set project to current project
 m = p.activeMap # get current map
 layers = m.listLayers() # get layers in map
-target = arcpy.GetParameterAsText(0)
-mapping = arcpy.GetParameterAsText(1)
+target = arcpy.GetParameterAsText(0) # get database target path (gdb or url)
+mapping = arcpy.GetParameterAsText(1) # get mapping file path
 
 # update connection properties
 updateconnprop(target_path=target, mapping_path=mapping, l=layers)
