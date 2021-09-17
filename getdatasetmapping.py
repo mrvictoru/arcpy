@@ -1,4 +1,4 @@
-import arcpy, json
+import arcpy, json, os
 
 p = arcpy.mp.ArcGISProject('current')
 m = p.activeMap
@@ -33,5 +33,5 @@ for layer in l:
 for x in xlist:
     json_object = json.dumps(x, indent = 4)
     name = x["dataset"] + ".json"
-    with open(name, "w") as outfile:
+    with open(os.path.join(output_path,name), "w") as outfile:
         outfile.write(json_object)
