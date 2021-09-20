@@ -16,6 +16,7 @@ def checknameinjmap(jmapping, layer, codemap):
                 group = defintion.split(" IN ")[1]
                 group = group.replace('(', '')
                 group = group.replace(')', '')
+                code = group.split(",")[0]
 
     if isdef:                
         name = codemap.get(code)
