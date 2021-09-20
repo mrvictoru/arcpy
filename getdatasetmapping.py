@@ -3,7 +3,7 @@ import arcpy, json, os
 p = arcpy.mp.ArcGISProject('current')
 m = p.activeMap
 l = m.listLayers()
-output_path = arcpy.GetParameter(0) # get Destination path
+output_path = arcpy.GetParameterAsText(0) # get Destination path
 
 xlist = []
 
