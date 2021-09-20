@@ -1,11 +1,24 @@
 import arcpy, json, os, sys
 
-def checknameinjmap(jmapping, name):
+# this function check if this feature belong in a particular dataset
+def checknameinjmap(jmapping, layer, codemap):
+    deftext = layer.definitionQuery
+    defquery = deftext.split(' And ')
+
+    # extract assetgroup code from defintion query
+    for defintion in defquery:
+        if "ASSETGROUP" in defintion:
+            if " = " in defintion:
+                code = defintion.split(" = ")[0]
+            else:
+
+    
+    name = layer.name
     if name.lower() in (string.lower() for string in jmapping["feature"]):
         return True
     else:
         return False
-        
+
 # this function can only be used if the target path is a file geodatabase
 def updateconnprop(target_path, mapping_path, l, codenamemap):
     #check workspace:
@@ -38,9 +51,9 @@ def updateconnprop(target_path, mapping_path, l, codenamemap):
             # set new connection info to database
             new_conn['connection_info'] = {}
             new_conn['connection_info'][conn_base] = target_path
-            # disregard lower case when check for dataset mapping
+            # check for dataset mapping and set appropriate dataset
             for jmapping in jsonlist:
-                if checknameinjmap(jmapping=jmapping, name=layer.name):
+                if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codenamemap):
                     new_conn["dataset"] = jmapping["dataset"]
                     break
             # set to appropriate workspace factory
@@ -60,15 +73,12 @@ def un_assetgroup_code_name(utility_network):
     # Domain Network properties
     domnets = d.domainNetworks
     for dom in domnets:
-
         # Edge Source Properties
         for edgeSource in dom.edgeSources:
-
             # Asset Group Properties
             for ag in edgeSource.assetGroups:
-                row = [ag.assetGroupCode, ag.assetGroupName]
-                rows.append(row)
-
+                rows.append({ag.assetGroupCode: ag.assetGroupName})
+                
     return rows
 
 
@@ -80,9 +90,7 @@ target = arcpy.GetParameterAsText(0) # get database target path (gdb or url)
 mapping = arcpy.GetParameterAsText(1) # get mapping file path
 un = arcpy.GetParameterAsText(0) # get Utility network
 
-# get assetgroup code and name mapping
-codelist = un_assetgroup_code_name(utility_network=un)
 # update connection properties
-updateconnprop(target_path=target, mapping_path=mapping, l=layers)
+updateconnprop(target_path=target, mapping_path=mapping, l=layers, codenamemap = un_assetgroup_code_name(utility_network=un))
 
 
