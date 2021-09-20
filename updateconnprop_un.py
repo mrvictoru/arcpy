@@ -21,7 +21,7 @@ def checknameinjmap(jmapping, layer, codemap):
         name = codemap.get(code)
     else:
         name = layer.name
-        
+
     if name.lower() in (string.lower() for string in jmapping["feature"]):
         return True
     else:
@@ -97,7 +97,7 @@ m = p.activeMap # get current map
 layers = m.listLayers() # get layers in map
 target = arcpy.GetParameterAsText(0) # get database target path (gdb or url)
 mapping = arcpy.GetParameterAsText(1) # get mapping file path
-un = arcpy.GetParameterAsText(0) # get Utility network
+un = arcpy.GetParameterAsText(2) # get Utility network
 
 # update connection properties
 updateconnprop(target_path=target, mapping_path=mapping, l=layers, codenamemap = un_assetgroup_code_name(utility_network=un))
