@@ -2,18 +2,26 @@ import arcpy, json, os, sys
 
 # this function check if this feature belong in a particular dataset
 def checknameinjmap(jmapping, layer, codemap):
+    isdef = False
     deftext = layer.definitionQuery
     defquery = deftext.split(' And ')
 
     # extract assetgroup code from defintion query
     for defintion in defquery:
         if "ASSETGROUP" in defintion:
+            isdef = True
             if " = " in defintion:
-                code = defintion.split(" = ")[0]
+                code = defintion.split(" = ")[1]
             else:
+                group = defintion.split(" IN ")[1]
+                group = group.replace('(', '')
+                group = group.replace(')', '')
 
-    
-    name = layer.name
+    if isdef:                
+        name = codemap.get(code)
+    else:
+        name = layer.name
+        
     if name.lower() in (string.lower() for string in jmapping["feature"]):
         return True
     else:
@@ -53,6 +61,7 @@ def updateconnprop(target_path, mapping_path, l, codenamemap):
             new_conn['connection_info'][conn_base] = target_path
             # check for dataset mapping and set appropriate dataset
             for jmapping in jsonlist:
+                # for UN feature layer
                 if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codenamemap):
                     new_conn["dataset"] = jmapping["dataset"]
                     break
@@ -69,7 +78,7 @@ def updateconnprop(target_path, mapping_path, l, codenamemap):
 # this function get the assetgroup code and name mapping in a list: [0] being code and [1] being name
 def un_assetgroup_code_name(utility_network):
     d = arcpy.Describe(utility_network)
-    rows = []
+    rows = {}
     # Domain Network properties
     domnets = d.domainNetworks
     for dom in domnets:
@@ -77,7 +86,7 @@ def un_assetgroup_code_name(utility_network):
         for edgeSource in dom.edgeSources:
             # Asset Group Properties
             for ag in edgeSource.assetGroups:
-                rows.append({ag.assetGroupCode: ag.assetGroupName})
+                rows.update({ag.assetGroupCode: ag.assetGroupName})
                 
     return rows
 
