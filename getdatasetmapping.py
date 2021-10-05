@@ -8,27 +8,16 @@ output_path = arcpy.GetParameterAsText(0) # get Destination path
 xlist = []
 
 for layer in l:
-    try:
-        print(layer.connectionProperties['dataset'])
-        if len(xlist) == 0:
-            setdict = {
-                "dataset": None,
+    layerlist = layer.listLayers
+    if len(layerlist) > 1:
+        setdict = {
+                "dataset": layer.name,
                 "feature": []
-            }
-            xlist.append(setdict)
-        else:
-            print("push new dict")
-            print("set: " + setdict["dataset"])
-            print(setdict["feature"])
-            setdict = {
-                "dataset": None,
-                "feature": []
-            }
-            xlist.append(setdict)
-        setdict["dataset"] = layer.connectionProperties['dataset']
-
-    except:
-        setdict["feature"].append(layer.name)
+        }
+        xlist.append(setdict)
+        for sublayer in layerlist:
+            setdict["feature"].append(sublayer.name)
+        
 
 for x in xlist:
     json_object = json.dumps(x, indent = 4)
