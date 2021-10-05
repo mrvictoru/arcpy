@@ -11,8 +11,8 @@ for layer in l:
     layerlist = layer.listLayers
     if len(layerlist) > 1:
         setdict = {
-                "dataset": layer.name,
-                "feature": []
+            "dataset": layer.name,
+            "feature": []
         }
         
         for sublayer in layerlist:
