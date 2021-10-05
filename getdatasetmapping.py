@@ -14,9 +14,10 @@ for layer in l:
                 "dataset": layer.name,
                 "feature": []
         }
-        xlist.append(setdict)
+        
         for sublayer in layerlist:
             setdict["feature"].append(sublayer.name)
+        xlist.append(setdict)
         
 
 for x in xlist:
