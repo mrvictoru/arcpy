@@ -11,13 +11,13 @@ for layer in l:
     layerlist = layer.listLayers
     if len(layerlist) > 1:
         setdict = {
-            "dataset": layer.name,
+            "dataset": layer.connectionProperties['dataset'],
             "feature": []
         }
         
         for sublayer in layerlist:
             setdict["feature"].append(sublayer.name)
-            
+
         xlist.append(setdict)
         
 

@@ -34,9 +34,11 @@ def updateconnprop(target_path, mapping_path, l, codenamemap):
     if "gdb" in target_path:
         workspace_factory = "File Geodatabase"
         conn_base = "database"
+        arcpy.AddMessage("Target Path is a gdb")
     elif "http" in target_path:
         workspace_factory = "FeatureService"
         conn_base = "url"
+        arcpy.AddMessage("Target Path is an url")
     elif "sde" in target_path:
         arcpy.AddError("Does not support SDE")
         sys.exit(0)
@@ -55,26 +57,32 @@ def updateconnprop(target_path, mapping_path, l, codenamemap):
 
     # loop through the layers in the map
     for layer in l:
+        pmsg = "Layer name: " + str(layer.name)
+        arcpy.AddMessage(pmsg)
         if layer.supports("CONNECTIONPROPERTIES"):
             new_conn = layer.connectionProperties
-            # set new connection info to database
-            new_conn['connection_info'] = {}
-            new_conn['connection_info'][conn_base] = target_path
-            # check for dataset mapping and set appropriate dataset
-            for jmapping in jsonlist:
-                # for UN feature layer
-                if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codenamemap):
-                    new_conn["dataset"] = jmapping["dataset"]
-                    break
-            # set to appropriate workspace factory
-            new_conn["workspace_factory"] = workspace_factory
-            arcpy.AddMessage(layer.name)
-            pmsg = str(layer.connectionProperties) + " updating"
+            if new_conn is not None:
+                # set new connection info to database
+                new_conn['connection_info'] = {}
+                new_conn['connection_info'][conn_base] = target_path
+                # check for dataset mapping and set appropriate dataset
+                for jmapping in jsonlist:
+                    # for UN feature layer
+                    if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codenamemap):
+                        new_conn["dataset"] = jmapping["dataset"]
+                        break
+                # set to appropriate workspace factory
+                new_conn["workspace_factory"] = workspace_factory
+                arcpy.AddMessage(layer.name)
+                pmsg = str(layer.connectionProperties) + " updating"
 
-            arcpy.AddMessage(pmsg)
-            layer.updateConnectionProperties(layer.connectionProperties, new_conn,True,False,False)
-            pmsg = str(layer.connectionProperties) + " updated"
-            arcpy.AddMessage(pmsg)
+                arcpy.AddMessage(pmsg)
+                layer.updateConnectionProperties(layer.connectionProperties, new_conn,True,False,False)
+                pmsg = str(layer.connectionProperties) + " updated"
+                arcpy.AddMessage(pmsg)
+            else:
+                pmsg = "Connection for layer is None"
+                arcpy.AddMessage(pmsg)
 
 # this function get the assetgroup code and name mapping in a dict. Code being key and Name being value
 def un_assetgroup_code_name(utility_network):
