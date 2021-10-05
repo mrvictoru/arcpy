@@ -17,6 +17,7 @@ for layer in l:
         
         for sublayer in layerlist:
             setdict["feature"].append(sublayer.name)
+            
         xlist.append(setdict)
         
 
