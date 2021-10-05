@@ -76,7 +76,7 @@ def updateconnprop(target_path, mapping_path, l, codenamemap):
             pmsg = str(layer.connectionProperties) + " updated"
             arcpy.AddMessage(pmsg)
 
-# this function get the assetgroup code and name mapping in a list: [0] being code and [1] being name
+# this function get the assetgroup code and name mapping in a dict. Code being key and Name being value
 def un_assetgroup_code_name(utility_network):
     d = arcpy.Describe(utility_network)
     rows = {}
