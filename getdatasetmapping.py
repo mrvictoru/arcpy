@@ -8,7 +8,7 @@ output_path = arcpy.GetParameterAsText(0) # get Destination path
 xlist = []
 
 for layer in l:
-    layerlist = layer.listLayers
+    layerlist = layer.listLayers()
     if len(layerlist) > 1:
         setdict = {
             "dataset": layer.connectionProperties['dataset'],
