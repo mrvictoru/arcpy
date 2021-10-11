@@ -3,20 +3,21 @@ import arcpy, json, os, sys
 # this function check if this feature belong in a particular dataset
 def checknameinjmap(jmapping, layer, codemap):
     isdef = False
-    deftext = layer.definitionQuery
-    defquery = deftext.split(' And ')
+    if layer.supports("definitionQuery"):
+        deftext = layer.definitionQuery
+        defquery = deftext.split(' And ')
 
-    # extract assetgroup code from defintion query
-    for defintion in defquery:
-        if "ASSETGROUP" in defintion:
-            isdef = True
-            if " = " in defintion:
-                code = defintion.split(" = ")[1]
-            else:
-                group = defintion.split(" IN ")[1]
-                group = group.replace('(', '')
-                group = group.replace(')', '')
-                code = group.split(",")[0]
+        # extract assetgroup code from defintion query
+        for defintion in defquery:
+            if "ASSETGROUP" in defintion:
+                isdef = True
+                if " = " in defintion:
+                    code = defintion.split(" = ")[1]
+                else:
+                    group = defintion.split(" IN ")[1]
+                    group = group.replace('(', '')
+                    group = group.replace(')', '')
+                    code = group.split(",")[0]
 
     if isdef:                
         name = codemap.get(code)
