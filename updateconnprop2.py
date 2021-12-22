@@ -70,13 +70,14 @@ def jsonlist(path):
             jsonlist.append(data)
     return jsonlist
 
+# check if layer is a non-network layer
 def ifnonnetwork(layer):
-    if layer.name:
-        if "nonnetwork" in layer.name.lower():
-            return True
-        else:
+    if layer.supports("definitionQuery"):
+        deftext = layer.definitionQuery
+        if "ASSETGROUP" in deftext or "ASSETTYPE" in deftext:
             return False
-
+        else:
+            return True
 
 def updateconnprop(target_network_path, target_nonnetwork_path, mappinglist, layers, codemap):
     #check workspace for network:
@@ -87,23 +88,29 @@ def updateconnprop(target_network_path, target_nonnetwork_path, mappinglist, lay
     for layer in layers:
         pmsg = "Layer name: " + str(layer.name)
         arcpy.AddMessage(pmsg)
+        # check if layer support connection properties
         if layer.supports("CONNECTIONPROPERTIES"):
             new_conn = layer.connectionProperties
             if new_conn is not None:
-                # set new connection info to database
-                new_conn['connection_info'] = {}
-                new_conn['connection_info'][conn_base] = target_path
-                # check for dataset mapping and set appropriate dataset
-                for jmapping in jsonlist:
-                    # for UN feature layer
-                    if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codenamemap):
-                        new_conn["dataset"] = jmapping["dataset"]
-                        break
-                # set to appropriate workspace factory
-                new_conn["workspace_factory"] = workspace_factory
+                # check if layer is a non-network layer
+                if ifnonnetwork(layer):
+                    new_conn['connection_info]'] = {}
+                    new_conn['connection_info'][nonnetwork_conn_base] = target_nonnetwork_path
+                    new_conn['workspace_factory'] = nonnetwork_workspace_factory
+                else:
+                    # set new connection info to database
+                    new_conn['connection_info'] = {}
+                    new_conn['connection_info'][network_conn_base] = target_network_path
+                    # check for dataset mapping and set appropriate dataset
+                    for jmapping in jsonlist:
+                        # for UN feature layer
+                        if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codemap):
+                            new_conn["dataset"] = jmapping["dataset"]
+                            break
+                    # set to appropriate workspace factory
+                    new_conn["workspace_factory"] = network_workspace_factory
                 arcpy.AddMessage(layer.name)
                 pmsg = str(layer.connectionProperties) + " updating"
-
                 arcpy.AddMessage(pmsg)
                 layer.updateConnectionProperties(layer.connectionProperties, new_conn,True,False,False)
                 pmsg = str(layer.connectionProperties) + " updated"
