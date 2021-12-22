@@ -71,7 +71,12 @@ def jsonlist(path):
     return jsonlist
 
 def ifnonnetwork(layer):
-    if layer.name
+    if layer.name:
+        if "nonnetwork" in layer.name.lower():
+            return True
+        else:
+            return False
+
 
 def updateconnprop(target_network_path, target_nonnetwork_path, mappinglist, layers, codemap):
     #check workspace for network:
