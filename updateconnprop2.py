@@ -18,7 +18,8 @@ def checknameinjmap(jmapping, layer, codemap):
                     group = group.replace('(', '')
                     group = group.replace(')', '')
                     code = group.split(",")[0]
-
+    
+    # 
     if isdef:                
         name = codemap.get(code)
     else:
@@ -102,8 +103,9 @@ def updateconnprop(target_network_path, target_nonnetwork_path, mappinglist, lay
                     new_conn['connection_info'] = {}
                     new_conn['connection_info'][network_conn_base] = target_network_path
                     # check for dataset mapping and set appropriate dataset
-                    for jmapping in jsonlist:
+                    for jmapping in mappinglist:
                         # for UN feature layer
+                        # add to do: distinguish between schematic and map layer
                         if checknameinjmap(jmapping=jmapping, layer=layer, codemap = codemap):
                             new_conn["dataset"] = jmapping["dataset"]
                             break
