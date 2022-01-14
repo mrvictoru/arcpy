@@ -11,8 +11,9 @@ class featurenode():
         temp = layer.longName.split('\\')
         self.nodename = temp[-1]
         self.nodebranches = temp[::-1][1:]
-        self.defquery = layer.definitionQuery
-        self.recordcount = arcpy.management.GetCount(layer)
+        if layer.supports("DEFINITIONQUERY"):
+            self.defquery = layer.definitionQuery
+            self.recordcount = arcpy.management.GetCount(layer)
 
 def writeheader(writer):
     writer.writerow(['LayerName', 'RecordCount', 'DefinitionQuery', 'NodePath'])
