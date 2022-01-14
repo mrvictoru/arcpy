@@ -26,6 +26,9 @@ def main():
         writeheader(csv.writer(csvfile))
     
     for layer in layers:
+        if layer.name == 'Class 1':
+            continue
+        arcpy.AddMessage(layer.longName)
         if layer.isFeatureLayer:
             node = featurenode()
             node.getnode(layer)
