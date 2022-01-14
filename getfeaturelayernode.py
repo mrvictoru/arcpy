@@ -10,7 +10,7 @@ class featurenode():
     def getnode(self,layer):
         temp = layer.longName.split('\\')
         self.nodename = temp[-1]
-        self.nodebranches = temp[::-1][:-1]
+        self.nodebranches = temp[::-1][1:]
         self.defquery = layer.definitionQuery
         self.recordcount = arcpy.management.GetCount(layer)
 
@@ -31,6 +31,16 @@ def main():
             with open(output, 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile, delimiter=',')
                 writer.writerow([node.nodename, node.recordcount, node.defquery, '\\'.join(node.nodebranches)])
+        else:
+            cnt = 0
+            for sublayer in layer.listLayers():
+                cnt += 1
+            if cnt == 0:
+                node = featurenode()
+                node.getnode(layer)
+                with open(output, 'a', newline='') as csvfile:
+                    writer = csv.writer(csvfile, delimiter=',')
+                    writer.writerow([node.nodename, node.recordcount, node.defquery, '\\'.join(node.nodebranches)])
 
 main()
 
