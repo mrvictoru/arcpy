@@ -31,11 +31,7 @@ def main():
             with open(output, 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile, delimiter=',')
                 writer.writerow([node.nodename, node.recordcount, node.defquery, '\\'.join(node.nodebranches)])
-        else:
-            cnt = 0
-            for sublayer in layer.listLayers():
-                cnt += 1
-            if cnt == 0:
+        elif not(len(layer.listLayers()) > 0):
                 node = featurenode()
                 node.getnode(layer)
                 with open(output, 'a', newline='') as csvfile:
