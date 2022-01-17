@@ -14,9 +14,16 @@ class featurenode():
         if layer.supports("DEFINITIONQUERY"):
             self.defquery = layer.definitionQuery
             self.recordcount = arcpy.management.GetCount(layer)
+    
+    def getemptynode(self,layer):
+        temp = layer.longName.split('\\')
+        self.nodebranches = temp[::-1]
 
 def writeheader(writer):
     writer.writerow(['LayerName', 'RecordCount', 'DefinitionQuery', 'NodePath'])
+
+def writecsv(writer,node):
+    writer.writerow([node.nodename, node.recordcount, node.defquery, '\\'.join(node.nodebranches)])
 
 def main():
     project = arcpy.GetParameterAsText(0)
@@ -33,14 +40,12 @@ def main():
             node = featurenode()
             node.getnode(layer)
             with open(output, 'a', newline='') as csvfile:
-                writer = csv.writer(csvfile, delimiter=',')
-                writer.writerow([node.nodename, node.recordcount, node.defquery, '\\'.join(node.nodebranches)])
+                writecsv(csv.writer(csvfile),node)
         elif not(len(layer.listLayers()) > 0):
                 node = featurenode()
-                node.getnode(layer)
+                node.getemptynode(layer)
                 with open(output, 'a', newline='') as csvfile:
-                    writer = csv.writer(csvfile, delimiter=',')
-                    writer.writerow([node.nodename, node.recordcount, node.defquery, '\\'.join(node.nodebranches)])
+                    writecsv(csv.writer(csvfile),node)
 
 main()
 
