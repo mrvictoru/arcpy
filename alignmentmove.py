@@ -32,7 +32,7 @@ def shiftbyalignment(alignment):
         y = 0
     return (x,y)
 
-def shfitCoordinate(shape, alignment, rad):
+def shiftCoordinate(shape, alignment, rad):
     factor = 1
     xshift = shiftbyalignment(alignment)[0]
     yshift = shiftbyalignment(alignment)[1]
