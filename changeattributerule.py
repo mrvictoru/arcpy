@@ -11,7 +11,8 @@ saveFilesToPath = arcpy.GetParameterAsText(1) #Get the path to save the files to
 newtablename = "Colour"
 
 #pattern in attribute rule to match and replacement pattern
-pattern = "datastore,'\w+',"
+pattern1 = "datastore,'\w+',"
+pattern2 = "datastore,'{[\w-]+}','"
 newpattern = "datastore,'{}',".format(newtablename)
 
 #Export attribute rules from the database
@@ -44,9 +45,14 @@ for fc in featureclasses:
             attributerules.append(attributerule(fc, row[0], row[9]))
     
     for rule in attributerules:
-        if re.search(pattern, rule.expression):
+        if re.search(pattern1, rule.expression):
             #replace the pattern in the expression
-            rule.expression = re.sub(pattern, newpattern, rule.expression)
+            rule.expression = re.sub(pattern1, newpattern, rule.expression)
+            #alter attribute rule
+            arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
+        elif re.search(pattern2, rule.expression):
+            #replace the pattern in the expression
+            rule.expression = re.sub(pattern2, newpattern, rule.expression)
             #alter attribute rule
             arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
 
