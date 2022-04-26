@@ -1,15 +1,22 @@
 # this python scrip with update attribute rule in batch by exporting attribute rule from csv file
-
 import arcpy
 import os
 import csv
 import re
 
+#define an attribute rule class
+class attributerule:
+    def __init__(self, fc, rulename, expression):
+        self.table = fc
+        self.rulename = rulename
+        self.expression = expression
+
 #DB paths and setup
 exportFromDB = arcpy.GetParameterAsText(0) #Get the path to the database to export attribute rule from
 saveFilesToPath = arcpy.GetParameterAsText(1) #Get the path to save the files to
-newtablename = "Colour"
 
+# Script execution code goes here
+newtablename = "Colour"
 #pattern in attribute rule to match and replacement pattern
 pattern1 = "datastore,'\w+',"
 pattern2 = "datastore,'{[\w-]+}','"
@@ -19,12 +26,7 @@ newpattern = "datastore,'{}',".format(newtablename)
 arcpy.env.workspace = exportFromDB
 featureclasses = arcpy.ListFeatureClasses()
 
-#define an attribute rule class
-class attributerule:
-    def __init__(self, fc, rulename, expression):
-        self.table = fc
-        self.rulename = rulename
-        self.expression = expression
+
 
 #loop through each feature class
 for fc in featureclasses:
@@ -47,12 +49,22 @@ for fc in featureclasses:
     for rule in attributerules:
         if re.search(pattern1, rule.expression):
             #replace the pattern in the expression
+            pmsg = "Updating " + rule.rulename + " in " + rule.table
+            arcpy.AddMessage(pmsg)
             rule.expression = re.sub(pattern1, newpattern, rule.expression)
             #alter attribute rule
             arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
         elif re.search(pattern2, rule.expression):
             #replace the pattern in the expression
+            pmsg = "Updating " + rule.rulename + " in " + rule.table
+            arcpy.AddMessage(pmsg)
             rule.expression = re.sub(pattern2, newpattern, rule.expression)
             #alter attribute rule
-            arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
+        arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
+    
+
+
+
+
+
 
