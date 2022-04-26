@@ -26,10 +26,13 @@ newpattern = "datastore,'{}',".format(newtablename)
 arcpy.env.workspace = exportFromDB
 featureclasses = arcpy.ListFeatureClasses()
 
-
+pmsg = "Number of feature classes: " + str(len(featureclasses))
+arcpy.AddMessage(pmsg)
 
 #loop through each feature class
 for fc in featureclasses:
+    pmsg = "Checking feature class: " + str(fc)
+    arcpy.AddMessage(pmsg)
     #check if the feature class has attribute rules
     if(arcpy.Describe(fc).attributeRules):
         pmsg = "Exporting attribute rules for " + str(fc)
@@ -37,7 +40,7 @@ for fc in featureclasses:
         outputPath = os.path.join(saveFilesToPath, fc + "_AttributeRules.csv")
         arcpy.ExportAttributeRules_management(fc, outputPath)
     else:
-        break
+        continue
     
     #read csv file and create attributerule object
     with open(outputPath, 'r') as csvfile:
@@ -60,7 +63,7 @@ for fc in featureclasses:
             arcpy.AddMessage(pmsg)
             rule.expression = re.sub(pattern2, newpattern, rule.expression)
             #alter attribute rule
-        arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
+            arcpy.management.AlterAttributeRule(rule.table, rule.rulename, script_expression = rule.expression)
     
 
 
